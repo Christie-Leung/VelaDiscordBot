@@ -1,4 +1,7 @@
-package Commands.Utilities.MovieList;
+package Sql;
+
+import Commands.Utilities.MovieList.MovieList;
+import Commands.Utilities.MovieList.MovieListImpl;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,22 +16,21 @@ public class MovieListSql {
 
         try {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "root");
+            connection = DriverManager.getConnection(Private.sqlURL, Private.sqlUsername, Private.sqlPass);
         } catch(SQLException e) {
             e.printStackTrace();
         }
         createTable();
     }
 
-    public static Connection getConn() {
+    public static void getConn() {
         try {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "root");
+            connection = DriverManager.getConnection(Private.sqlURL, Private.sqlUsername, Private.sqlPass);
         } catch(SQLException e) {
             e.printStackTrace();
         }
         createTable();
-        return connection;
     }
 
     public static void createTable() {

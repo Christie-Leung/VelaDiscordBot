@@ -1,7 +1,8 @@
 package Listeners;
 
 import Commands.ComparingDateTime.CompareDates;
-import Commands.ComparingDateTime.ScheduleSql;
+import Commands.RandomStoof.StringCmds;
+import Sql.ScheduleSql;
 import Commands.RandomStoof.SpamCmd;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -19,7 +20,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MessageListener extends ListenerAdapter {
-
     private CompareDates calendar = new CompareDates();
 
     @Override
@@ -29,7 +29,6 @@ public class MessageListener extends ListenerAdapter {
         final Timer timer = new Timer("Timer");
         EmbedBuilder eb = new EmbedBuilder();
         final LocalDateTime[] date = new LocalDateTime[1];
-
 
         TimerTask repeatedTask = new TimerTask() {
             public void run() {
@@ -58,5 +57,38 @@ public class MessageListener extends ListenerAdapter {
 
         };
         timer.scheduleAtFixedRate(repeatedTask, 0, 6000);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        MessageChannel channel = event.getChannel();
+        int year = LocalDateTime.now().getYear();
+
+        if(!event.getAuthor().isBot() && event.getMessage().getContentRaw().startsWith("!")) {
+            stringBuilder.append(event.getMessage().getContentRaw());
+            stringBuilder.deleteCharAt(0);
+            String msg = stringBuilder.toString();
+            int characters = stringBuilder.length();
+
+            if(characters <= 200) {
+                if(msg.startsWith("ping")) {
+                    channel.sendMessage("pong").queue();
+                } else {
+                    for (StringCmds s : StringCmds.listOfStrings) {
+                        if(msg.toLowerCase().startsWith(s.cmd)) {
+                            event.getChannel().sendMessage(s.output).tts(true).queue();
+                            event.getMessage().delete().queue();
+                        }
+                    }
+                    switch (stringBuilder.toString()) {
+                        //random
+                        case "christmas":
+                            channel.sendMessage(calendar.compareDates("Christmas Countdown", LocalDateTime.of(year, 12, 25, 0, 0, 0)).build()).queue();
+                            break;
+                        case "halloween":
+                            channel.sendMessage(calendar.compareDates("Halloween Countdown", LocalDateTime.of(year, 10, 31, 0, 0, 0)).build()).queue();
+                            break;
+                    }
+                }
+            }
+        }
     }
 }

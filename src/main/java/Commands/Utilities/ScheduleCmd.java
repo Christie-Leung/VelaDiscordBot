@@ -1,6 +1,8 @@
 package Commands.Utilities;
 
 import Commands.ComparingDateTime.*;
+import Commands.UtilitiesCmd;
+import Sql.ScheduleSql;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -15,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import static Commands.ComparingDateTime.CompareDates.*;
 
-public class ScheduleCmd extends Command {
+public class ScheduleCmd extends UtilitiesCmd {
 
     private final EventWaiter waiter;
     private ScheduledEvent scheduledEvent;
@@ -24,13 +26,11 @@ public class ScheduleCmd extends Command {
         this.name = "schedule";
         this.waiter = waiter;
         this.help = "schedules an event";
-        this.arguments = "{add|get|getAll|delete} yyyy mm dd HH MM ss";
-        this.category = new Category("Utilities");
+        this.arguments = "add | get | getAll | delete> <yyyy> <mm> <dd> <HH> <MM> <ss";
     }
 
-
     @Override
-    protected void execute(CommandEvent event) {
+    public void doCommand(CommandEvent event) {
 
         CompareDates calendar = new CompareDates();
 

@@ -1,12 +1,11 @@
-import Commands.General.UserCmd;
+import Commands.General.*;
 import Commands.RandomStoof.*;
-import Commands.General.ChannelCmd;
-import Commands.General.RoleCmd;
 import Commands.Utilities.CompareDatesCmd;
 import Commands.Utilities.MovieList.MovieListCmd;
-import Commands.Utilities.MovieList.MovieListSql;
+import Listeners.JoinGuildListener;
+import Sql.MovieListSql;
 import Commands.Utilities.ScheduleCmd;
-import Commands.ComparingDateTime.ScheduleSql;
+import Sql.ScheduleSql;
 import Listeners.MessageListener;
 import Listeners.PlayerJoinListener;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
@@ -28,29 +27,42 @@ public class VelaBot extends ListenerAdapter {
 
         MessageListener msgListener = new MessageListener();
         PlayerJoinListener playerJoinListener = new PlayerJoinListener();
+        JoinGuildListener joinGuildListener = new JoinGuildListener();
+
+        StringCmds.setListOfStrings();
 
         CommandClientBuilder client = new CommandClientBuilder();
-        client.setPrefix(Private.prefix)
+        client.setPrefix("!")
                 .setOwnerId(Private.ownerId)
                 .setActivity(Activity.playing("the game"))
-                .useHelpBuilder(true)
+                .useHelpBuilder(false)
                 .addCommands(
-                        new RoleCmd(),
-                        new ScheduleCmd(waiter, scheduleSql),
-                        new YellCmd(),
+                        new HelpCmd(),
+                        // General
                         new ChannelCmd(),
-                        new MovieListCmd(waiter, movieListSql),
+                        new InfoCmd(),
+                        new RoleCmd(),
+                        new UserCmd(),
+                        // Random Stoof
                         new ClapCmd(),
-                        new DeleteLineCmd(),
                         new ConvoCmd(waiter),
-                        new CompareDatesCmd(),
+                        new DeleteLineCmd(),
                         new EightBallCmd(),
+                        new EmojisCmd(),
                         new SpamCmd(waiter),
-                        new UserCmd()
+                        new YellCmd(waiter),
+                        // Utilities
+                        new MovieListCmd(waiter, movieListSql),
+                        new CompareDatesCmd(),
+                        new ScheduleCmd(waiter, scheduleSql)
                 );
 
         new JDABuilder(Private.botToken)
-                .addEventListeners(msgListener, playerJoinListener, client.build(), waiter)
+                .addEventListeners(msgListener,
+                        playerJoinListener,
+                        joinGuildListener,
+                        client.build(),
+                        waiter)
                 .build();
     }
 }

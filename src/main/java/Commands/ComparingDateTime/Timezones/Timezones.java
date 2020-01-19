@@ -1,5 +1,6 @@
 package Commands.ComparingDateTime.Timezones;
 
+import Sql.TimezoneSql;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 

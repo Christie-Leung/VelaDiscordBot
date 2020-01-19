@@ -1,12 +1,13 @@
 package Commands.Utilities;
 
 import Commands.ComparingDateTime.CompareDates;
+import Commands.UtilitiesCmd;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
 import java.time.LocalDateTime;
 
-public class CompareDatesCmd extends Command {
+public class CompareDatesCmd extends UtilitiesCmd {
 
     CompareDates calendar = new CompareDates();
 
@@ -14,11 +15,10 @@ public class CompareDatesCmd extends Command {
         this.name = "compare";
         this.help = "Compares give date with now";
         this.arguments = "yyyy mm dd HH MM ss";
-        this.category = new Category("Utilities");
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void doCommand(CommandEvent event) {
         if(event.getArgs().isEmpty()) {
             event.replyWarning("You didn't give me the correct format >:V! The command format is `!compare yyyy mm dd HH MM ss`");
         } else {

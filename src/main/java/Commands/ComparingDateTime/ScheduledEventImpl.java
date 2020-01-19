@@ -12,15 +12,6 @@ public class ScheduledEventImpl implements ScheduledEvent {
     public ScheduledEventImpl() {
     }
 
-    public ScheduledEventImpl(String[] args) {
-        if(args.length != 5) return;
-        setNameID(Long.parseLong(args[0]));
-        setName(args[1]);
-        setTimestamp(Timestamp.valueOf(args[2]));
-        setDescription(args[3]);
-        setServerID(Long.parseLong(args[4]));
-    }
-
     @Override
     public long getNameID() {
         return nameID;

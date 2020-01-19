@@ -1,5 +1,6 @@
 package Commands.RandomStoof;
 
+import Commands.RandomStoofCmd;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.entities.Message;
@@ -7,18 +8,16 @@ import net.dv8tion.jda.api.entities.MessageHistory;
 
 import java.util.List;
 
-public class DeleteLineCmd extends Command {
+public class DeleteLineCmd extends RandomStoofCmd {
 
     public DeleteLineCmd() {
-        this.name = "delete";
         this.name = "deyeet";
         this.help = "delete u stoopid";
-        this.arguments = "<integer>";
-        this.category = new Category("Random Stoof");
+        this.arguments = "integer";
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void doCommand(CommandEvent event) {
 
         String[] items = event.getArgs().split("\\s+");
         int lines = Integer.parseInt(items[0]);
@@ -29,6 +28,5 @@ public class DeleteLineCmd extends Command {
             msgs = history.retrievePast(1).complete();
             msgs.get(0).delete().queue();
         }
-
     }
 }

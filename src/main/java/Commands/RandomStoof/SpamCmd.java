@@ -1,6 +1,7 @@
 package Commands.RandomStoof;
 
 import Commands.General.UserCmd;
+import Commands.RandomStoofCmd;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -13,7 +14,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class SpamCmd extends Command {
+public class SpamCmd extends RandomStoofCmd {
 
     private final EventWaiter waiter;
     ArrayList<String> blackList = new ArrayList<>();
@@ -22,8 +23,7 @@ public class SpamCmd extends Command {
         this.name = "spam";
         this.help = "wellllll";
         this.waiter = waiter;
-        this.category = new Category("Random Stoof");
-        this.arguments = "<User (either ping or name)> <#toSpam>";
+        this.arguments = "User (either ping or name)> <#toSpam";
         setBlackList();
     }
 
@@ -41,10 +41,9 @@ public class SpamCmd extends Command {
         user.openPrivateChannel().queue((channel) -> channel.sendMessage(content.build()).queue());
     }
 
-
     @Override
-    protected void execute(CommandEvent event) {
-        User user = null;
+    public void doCommand(CommandEvent event) {
+        User user;
 
         String[] items = event.getArgs().split("\\s+");
         if(items.length == 1) {
@@ -88,7 +87,7 @@ public class SpamCmd extends Command {
 
         } else if(items.length >= 2) {
             if(event.getMessage().getMentionedMembers().isEmpty()) {
-                Member m = UserCmd.getUser(items[0], event);
+                Member m = UserCmd.getUser(items[0], event.getGuild().getMembers());
                 user = m.getUser();
             } else {
                 user = event.getMessage().getMentionedUsers().get(0);

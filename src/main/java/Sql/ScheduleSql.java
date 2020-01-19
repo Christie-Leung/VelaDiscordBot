@@ -1,4 +1,7 @@
-package Commands.ComparingDateTime;
+package Sql;
+
+import Commands.ComparingDateTime.ScheduledEvent;
+import Commands.ComparingDateTime.ScheduledEventImpl;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,7 +15,7 @@ public class ScheduleSql {
 
         try {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "root");
+            connection = DriverManager.getConnection(Private.sqlURL, Private.sqlUsername, Private.sqlPass);
         } catch(SQLException e) {
             e.printStackTrace();
         }

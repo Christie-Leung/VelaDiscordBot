@@ -1,5 +1,7 @@
 package Commands.Utilities.MovieList;
 
+import Commands.UtilitiesCmd;
+import Sql.MovieListSql;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -10,7 +12,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class MovieListCmd extends Command {
+public class MovieListCmd extends UtilitiesCmd {
 
     private final EventWaiter waiter;
 
@@ -21,7 +23,7 @@ public class MovieListCmd extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void doCommand(CommandEvent event) {
 
         if(event.getArgs().isEmpty()) {
             event.replyWarning("You didn't give me the correct format >:V! The command format is `!movielist [add|see|delete]`");

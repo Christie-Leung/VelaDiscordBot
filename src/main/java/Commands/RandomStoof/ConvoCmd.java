@@ -1,5 +1,6 @@
 package Commands.RandomStoof;
 
+import Commands.RandomStoofCmd;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -7,7 +8,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.concurrent.TimeUnit;
 
-public class ConvoCmd extends Command {
+public class ConvoCmd extends RandomStoofCmd {
 
     private final EventWaiter waiter;
 
@@ -15,11 +16,10 @@ public class ConvoCmd extends Command {
         this.waiter = waiter;
         this.name = "hi";
         this.help = "hi";
-        this.category = new Category("Random Stoof");
     }
 
     @Override
-    protected void execute(CommandEvent event) {
+    public void doCommand(CommandEvent event) {
 
         event.reply("Hello! What's your name?");
 

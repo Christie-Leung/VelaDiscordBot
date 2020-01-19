@@ -1,4 +1,7 @@
-package Commands.ComparingDateTime.Timezones;
+package Sql;
+
+import Commands.ComparingDateTime.Timezones.UserTimezone;
+import Commands.ComparingDateTime.Timezones.UserTimezoneImpl;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,10 +12,9 @@ public class TimezoneSql {
     private static Connection connection;
 
     public TimezoneSql() {
-
         try {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
-            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/mydb", "root", "root");
+            connection = DriverManager.getConnection(Private.sqlURL, Private.sqlUsername, Private.sqlPass);
         } catch(SQLException e) {
             e.printStackTrace();
         }
@@ -22,7 +24,7 @@ public class TimezoneSql {
     public static Connection getConn() {
         try {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
-            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/mydb", "root", "root");
+            connection = DriverManager.getConnection(Private.sqlURL, Private.sqlUsername, Private.sqlPass);
         } catch(SQLException e) {
             e.printStackTrace();
         }

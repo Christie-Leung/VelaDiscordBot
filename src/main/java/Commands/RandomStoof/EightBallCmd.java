@@ -1,18 +1,18 @@
 package Commands.RandomStoof;
 
+import Commands.RandomStoofCmd;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-public class EightBallCmd extends Command {
+public class EightBallCmd extends RandomStoofCmd {
 
     public EightBallCmd() {
         this.name = "8ball";
         this.help = "u should know waht this does";
-        this.category = new Category("Random Stoof");
     }
 
     @Override
-    protected void execute(CommandEvent commandEvent) {
+    public void doCommand(CommandEvent event) {
 
         int rando = (int) Math.floor(Math.random() * 10);
         String decision;
@@ -67,6 +67,6 @@ public class EightBallCmd extends Command {
                 decision = "https://tenor.com/SF0a.gif"; //hmm
                 break;
         }
-        commandEvent.replySuccess(decision + "");
+        event.replySuccess(decision + "");
     }
 }
