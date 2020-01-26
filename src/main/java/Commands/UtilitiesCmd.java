@@ -7,6 +7,7 @@ public abstract class UtilitiesCmd extends Command {
 
     public UtilitiesCmd() {
         this.category = new Category("Utilities");
+        this.guildOnly = true;
     }
 
     @Override

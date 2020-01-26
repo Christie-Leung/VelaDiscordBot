@@ -59,7 +59,10 @@ public class StringCmds {
         eb.setTitle("All Keywords");
         eb.setColor(new Color(183, 161, 255));
         for (StringCmds s : listOfStrings) {
-            eb.addField(s.cmd, s.output, true);
+            eb.appendDescription(s.cmd);
+            if(listOfStrings.indexOf(s) != listOfStrings.size() - 1) {
+                eb.appendDescription(" | ");
+            }
         }
         return eb;
     }

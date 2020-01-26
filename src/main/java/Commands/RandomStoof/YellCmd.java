@@ -36,14 +36,17 @@ public class YellCmd extends RandomStoofCmd {
                         // respond, inserting the name they listed into the response
                         e -> {
                             StringCmds.addStringCmds(items[1], e.getMessage().getContentRaw());
+                            e.getChannel().sendMessage("Done").queue();
                         },
                         // if the user takes more than a minute, time out
                         1, TimeUnit.MINUTES, () -> event.reply("<@" + event.getAuthor().getId() + ">" + " Sorry, you took too long."));
             } else if(items[0].toLowerCase().contains("remove")) {
                 StringCmds.removeStringCmds(items[1]);
+                event.replySuccess("Done");
+
             }
         } else if(items[0].toLowerCase().contains("list")) {
-            // event.getChannel().sendMessage(StringCmds.getListOfStrings().build()).queue();
+            event.replySuccess("Sent list to your dms! ");
             SpamCmd.sendPrivateEmbedMessage(event.getMember().getUser(), StringCmds.getListOfStrings());
         }
     }

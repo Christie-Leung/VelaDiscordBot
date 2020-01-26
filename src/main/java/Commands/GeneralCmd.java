@@ -7,7 +7,6 @@ public abstract class GeneralCmd extends Command {
 
     public GeneralCmd() {
         this.category = new Category("General");
-        this.guildOnly = true;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package Commands.RandomStoof;
 
 import Commands.RandomStoofCmd;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.vdurmont.emoji.Emoji;
 import com.vdurmont.emoji.EmojiManager;
@@ -10,7 +9,6 @@ public class EmojisCmd extends RandomStoofCmd {
 
     public EmojisCmd() {
         this.name = "emojis";
-        this.ownerCommand = true;
         this.help = "Displays info about Emojis";
         this.arguments = "emojis | name";
     }
@@ -27,14 +25,16 @@ public class EmojisCmd extends RandomStoofCmd {
                 e.replyError("Didnt work you stoopid");
             }
         } else if(items.length == 1) {
+            int x = 0;
             for (Emoji emoji : EmojiManager.getAll()) {
                 if(emoji.getAliases().get(0).toLowerCase().contains(items[0])) {
                     String unicode = emoji.getUnicode();
-                    if(e.getMessage().getEmotes().size() < 19) {
-                        e.getMessage().addReaction(unicode).queue();
-                    } else {
-                        e.getChannel().addReactionById(e.getChannel().sendMessage("More Emojis").getChannel().getLatestMessageId(), unicode).queue();
+                    if(x > 19) {
+                        e.getMessage().clearReactions().queue();
+                        x -= 20;
                     }
+                    e.getMessage().addReaction(unicode).queue();
+                    x++;
                 }
             }
         }
