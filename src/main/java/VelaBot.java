@@ -1,11 +1,9 @@
+import Commands.Admin.ChannelCmd;
+import Commands.Admin.RoleCmd;
 import Commands.General.*;
 import Commands.RandomStoof.*;
 import Commands.Utilities.CompareDatesCmd;
-import Commands.Utilities.MovieList.MovieListCmd;
 import Listeners.JoinGuildListener;
-import Sql.MovieListSql;
-import Commands.Utilities.ScheduleCmd;
-import Sql.ScheduleSql;
 import Listeners.MessageListener;
 import Listeners.PlayerJoinListener;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
@@ -19,12 +17,12 @@ import javax.security.auth.login.LoginException;
 public class VelaBot extends ListenerAdapter {
     public static void main(String[] args) throws LoginException {
         EventWaiter waiter = new EventWaiter();
-        ScheduleSql scheduleSql = new ScheduleSql();
+       /* ScheduleSql scheduleSql = new ScheduleSql();
         ScheduleSql.getConn();
 
         MovieListSql movieListSql = new MovieListSql();
         MovieListSql.getConn();
-
+*/
         MessageListener msgListener = new MessageListener();
         PlayerJoinListener playerJoinListener = new PlayerJoinListener();
         JoinGuildListener joinGuildListener = new JoinGuildListener();
@@ -34,7 +32,7 @@ public class VelaBot extends ListenerAdapter {
         CommandClientBuilder client = new CommandClientBuilder();
         client.setPrefix("!")
                 .setOwnerId(Private.ownerId)
-                .setActivity(Activity.playing("the game"))
+                .setActivity(Activity.playing("you"))
                 .useHelpBuilder(false)
                 .addCommands(
                         new HelpCmd(),
@@ -52,9 +50,9 @@ public class VelaBot extends ListenerAdapter {
                         new SpamCmd(waiter),
                         new YellCmd(waiter),
                         // Utilities
-                        new MovieListCmd(waiter, movieListSql),
-                        new CompareDatesCmd(),
-                        new ScheduleCmd(waiter, scheduleSql)
+                        //    new MovieListCmd(waiter, movieListSql),
+                        new CompareDatesCmd()
+                        //   new ScheduleCmd(waiter, scheduleSql)
                 );
 
         new JDABuilder(Private.botToken)

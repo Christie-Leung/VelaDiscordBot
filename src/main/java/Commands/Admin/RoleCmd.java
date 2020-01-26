@@ -1,6 +1,6 @@
-package Commands.General;
+package Commands.Admin;
 
-import Commands.GeneralCmd;
+import Commands.AdminCmd;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.Role;
 
 import java.awt.*;
 
-public class RoleCmd extends GeneralCmd {
+public class RoleCmd extends AdminCmd {
 
     public RoleCmd() {
         this.name = "role";
