@@ -25,7 +25,7 @@ public class ScheduleSql {
     public static Connection getConn() {
         try {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "root");
+            connection = DriverManager.getConnection(Private.sqlURL, Private.sqlUsername, Private.sqlPass);
         } catch(SQLException e) {
             e.printStackTrace();
         }

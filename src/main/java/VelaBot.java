@@ -3,9 +3,13 @@ import Commands.Admin.RoleCmd;
 import Commands.General.*;
 import Commands.RandomStoof.*;
 import Commands.Utilities.CompareDatesCmd;
+import Commands.Utilities.MovieList.MovieListCmd;
+import Commands.Utilities.ScheduleCmd;
 import Listeners.JoinGuildListener;
 import Listeners.MessageListener;
 import Listeners.PlayerJoinListener;
+import Sql.MovieListSql;
+import Sql.ScheduleSql;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDABuilder;
@@ -17,12 +21,12 @@ import javax.security.auth.login.LoginException;
 public class VelaBot extends ListenerAdapter {
     public static void main(String[] args) throws LoginException {
         EventWaiter waiter = new EventWaiter();
-       /* ScheduleSql scheduleSql = new ScheduleSql();
+        ScheduleSql scheduleSql = new ScheduleSql();
         ScheduleSql.getConn();
 
         MovieListSql movieListSql = new MovieListSql();
         MovieListSql.getConn();
-*/
+
         MessageListener msgListener = new MessageListener();
         PlayerJoinListener playerJoinListener = new PlayerJoinListener();
         JoinGuildListener joinGuildListener = new JoinGuildListener();
@@ -50,9 +54,9 @@ public class VelaBot extends ListenerAdapter {
                         new SpamCmd(waiter),
                         new YellCmd(waiter),
                         // Utilities
-                        //    new MovieListCmd(waiter, movieListSql),
-                        new CompareDatesCmd()
-                        //   new ScheduleCmd(waiter, scheduleSql)
+                        new MovieListCmd(waiter, movieListSql),
+                        new CompareDatesCmd(),
+                        new ScheduleCmd(waiter, scheduleSql)
                 );
 
         new JDABuilder(Private.botToken)

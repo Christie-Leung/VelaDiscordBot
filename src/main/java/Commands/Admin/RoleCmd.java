@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 
 import java.awt.*;
+import java.util.List;
 
 public class RoleCmd extends AdminCmd {
 
@@ -53,12 +54,14 @@ public class RoleCmd extends AdminCmd {
                 }
                 event.getChannel().sendMessage(eb.build()).queue();
             } else if(items[0].contains("add")) {
-                if(items.length == 3) {
+                if(items.length >= 3) {
                     for (Role r : guild.getRoles()) {
                         if(r.getName().equalsIgnoreCase(items[1]) || r.getName().contains(items[1])) {
-                            Member member = event.getMessage().getMentionedMembers().get(0);
-                            event.getGuild().addRoleToMember(member, r).queue();
-                            event.getChannel().sendMessage("Successfully added " + member.getEffectiveName() + " to " + r.getName()).queue();
+                            List<Member> memberList = event.getMessage().getMentionedMembers();
+                            for (Member member : memberList) {
+                                event.getGuild().addRoleToMember(member, r).queue();
+                                event.getChannel().sendMessage("Successfully added " + member.getEffectiveName() + " to " + r.getName()).queue();
+                            }
                             break;
                         }
                     }
@@ -66,12 +69,14 @@ public class RoleCmd extends AdminCmd {
                     event.getChannel().sendMessage("Do !role add [roleName] [user]").queue();
                 }
             } else if(items[0].contains("remove")) {
-                if(items.length == 3) {
+                if(items.length >= 3) {
                     for (Role r : guild.getRoles()) {
                         if(r.getName().equalsIgnoreCase(items[1]) || r.getName().contains(items[1])) {
-                            Member member = event.getMessage().getMentionedMembers().get(0);
-                            event.getGuild().removeRoleFromMember(member, r).queue();
-                            event.getChannel().sendMessage("Successfully removed " + member.getEffectiveName() + " from " + r.getName()).queue();
+                            List<Member> memberList = event.getMessage().getMentionedMembers();
+                            for (Member member : memberList) {
+                                event.getGuild().removeRoleFromMember(member, r).queue();
+                                event.getChannel().sendMessage("Successfully removed " + member.getEffectiveName() + " from " + r.getName()).queue();
+                            }
                             break;
                         }
                     }
