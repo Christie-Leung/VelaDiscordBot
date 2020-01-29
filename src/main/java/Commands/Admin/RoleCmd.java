@@ -59,10 +59,16 @@ public class RoleCmd extends AdminCmd {
                         if(r.getName().equalsIgnoreCase(items[1]) || r.getName().contains(items[1])) {
                             List<Member> memberList = event.getMessage().getMentionedMembers();
                             for (Member member : memberList) {
-                                event.getGuild().addRoleToMember(member, r).queue();
-                                event.getChannel().sendMessage("Successfully added " + member.getEffectiveName() + " to " + r.getName()).queue();
+                                boolean check = checkPlayersRole(member, r.getName());
+                                if(!check) {
+                                    event.getGuild().addRoleToMember(member, r).queue();
+                                    event.getChannel().sendMessage("Successfully added " + member.getEffectiveName() + " to " + r.getName()).queue();
+                                } else {
+                                    event.getChannel().sendMessage(member.getEffectiveName() + " already has this role! ").queue();
+                                }
+                                break;
                             }
-                            break;
+
                         }
                     }
                 } else {
@@ -74,8 +80,13 @@ public class RoleCmd extends AdminCmd {
                         if(r.getName().equalsIgnoreCase(items[1]) || r.getName().contains(items[1])) {
                             List<Member> memberList = event.getMessage().getMentionedMembers();
                             for (Member member : memberList) {
-                                event.getGuild().removeRoleFromMember(member, r).queue();
-                                event.getChannel().sendMessage("Successfully removed " + member.getEffectiveName() + " from " + r.getName()).queue();
+                                boolean check = checkPlayersRole(member, r.getName());
+                                if(check) {
+                                    event.getGuild().removeRoleFromMember(member, r).queue();
+                                    event.getChannel().sendMessage("Successfully removed " + member.getEffectiveName() + " from " + r.getName()).queue();
+                                } else {
+                                    event.getChannel().sendMessage(member.getEffectiveName() + " does not have this role! ").queue();
+                                }
                             }
                             break;
                         }
@@ -112,5 +123,16 @@ public class RoleCmd extends AdminCmd {
                 }
             }
         }
+    }
+
+    boolean checkPlayersRole(Member m, String role) {
+        boolean check = false;
+        List<Role> roleList = m.getRoles();
+        for (Role r : roleList) {
+            if(role.contains(r.getName())) {
+                check = true;
+            }
+        }
+        return check;
     }
 }
