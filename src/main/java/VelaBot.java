@@ -1,10 +1,13 @@
 import Commands.Admin.ChannelCmd;
 import Commands.Admin.RoleCmd;
 import Commands.General.*;
+import Commands.Owner.Testing;
 import Commands.RandomStoof.*;
+import Commands.School.Chem;
 import Commands.Utilities.CompareDatesCmd;
 import Commands.Utilities.MovieList.MovieListCmd;
 import Commands.Utilities.ScheduleCmd;
+import Listeners.GameListener;
 import Listeners.JoinGuildListener;
 import Listeners.MessageListener;
 import Listeners.PlayerJoinListener;
@@ -30,6 +33,7 @@ public class VelaBot extends ListenerAdapter {
         MessageListener msgListener = new MessageListener();
         PlayerJoinListener playerJoinListener = new PlayerJoinListener();
         JoinGuildListener joinGuildListener = new JoinGuildListener();
+        GameListener gameListener = new GameListener();
 
         StringCmds.setListOfStrings();
 
@@ -41,10 +45,8 @@ public class VelaBot extends ListenerAdapter {
                 .addCommands(
                         new HelpCmd(),
                         // General
-                        new ChannelCmd(),
-                        new InfoCmd(),
-                        new RoleCmd(),
                         new UserCmd(),
+                        new InfoCmd(),
                         // Random Stoof
                         new ClapCmd(),
                         new ConvoCmd(waiter),
@@ -53,16 +55,25 @@ public class VelaBot extends ListenerAdapter {
                         new EmojisCmd(),
                         new SpamCmd(waiter),
                         new YellCmd(waiter),
+                        // School
+                        new Chem(),
                         // Utilities
                         new MovieListCmd(waiter, movieListSql),
                         new CompareDatesCmd(),
-                        new ScheduleCmd(waiter, scheduleSql)
+                        new ScheduleCmd(waiter, scheduleSql),
+                        // Admin
+                        new RoleCmd(),
+                        new ChannelCmd(),
+                        // Owner
+                        new Testing(waiter)
+
                 );
 
         new JDABuilder(Private.botToken)
                 .addEventListeners(msgListener,
                         playerJoinListener,
                         joinGuildListener,
+                        gameListener,
                         client.build(),
                         waiter)
                 .build();
