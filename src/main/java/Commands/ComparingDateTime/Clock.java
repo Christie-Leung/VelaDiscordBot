@@ -4,19 +4,22 @@ import java.time.LocalDateTime;
 
 public class Clock {
 
+    public int year;
+    public int month;
     public int day;
     public int hour;
     public int min;
-    public int sec;
 
-    private Clock(int d, int h, int m, int s) {
-        day = d;
-        hour = h;
-        min = m;
-        sec = s;
+    public Clock(int year, int month, int day, int hour, int min) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
+        this.hour = hour;
+        this.min = min;
     }
 
     public static Clock getComparedTime(LocalDateTime scheduled, int day) {
+
 
         int nDays = LocalDateTime.now().getDayOfMonth();
         int sDays = scheduled.getDayOfMonth();
@@ -283,37 +286,7 @@ public class Clock {
         if(comparedHours > 0 && comparedDays != 0) {
             comparedDays -= 1;
         }
-        return new Clock(comparedDays, comparedHours, comparedMins, comparedSecs);
+        return new Clock(LocalDateTime.now().getYear(), LocalDateTime.now().getMonthValue(), comparedDays, comparedHours, comparedMins);
     }
-    /*static int getComparedHours(LocalDateTime scheduled) {
-        getComparedTime(scheduled);
-        return comparedHours;
-    }
-    static int getComparedMins(LocalDateTime scheduled) {
-        getComparedTime(scheduled);
-        return comparedMins;
-    }
-    static int getComparedSecs(LocalDateTime scheduled) {
-        getComparedTime(scheduled);
-        return comparedSecs;
-    }*/
 
-   /* static int getComparedMinutes(int now, int scheduled) {
-        int minutes = now - scheduled;
-        int comparedMinutes;
-
-        if (comparedHours )
-
-        if (minutes < 0) {
-            comparedMinutes = Math.abs(minutes);
-        } else if (minutes > 60) {
-            comparedMinutes = 69;
-        } else if (scheduled == 0) {
-            comparedMinutes = 60 - now;
-        } else {
-            comparedMinutes = -1 * minutes;
-        }
-
-        return comparedMinutes;
-    }*/
 }

@@ -24,10 +24,8 @@ import javax.security.auth.login.LoginException;
 public class VelaBot extends ListenerAdapter {
     public static void main(String[] args) throws LoginException {
         EventWaiter waiter = new EventWaiter();
-        ScheduleSql scheduleSql = new ScheduleSql();
-        ScheduleSql.getConn();
 
-        MovieListSql movieListSql = new MovieListSql();
+        ScheduleSql.getConn();
         MovieListSql.getConn();
 
         MessageListener msgListener = new MessageListener();
@@ -52,15 +50,16 @@ public class VelaBot extends ListenerAdapter {
                         new ConvoCmd(waiter),
                         new DeleteLineCmd(),
                         new EightBallCmd(),
-                        new EmojisCmd(),
+                        new EmojiCmd(),
                         new SpamCmd(waiter),
                         new YellCmd(waiter),
+                        new LetterCmd(waiter),
                         // School
                         new Chem(),
                         // Utilities
-                        new MovieListCmd(waiter, movieListSql),
+                        new MovieListCmd(waiter),
                         new CompareDatesCmd(),
-                        new ScheduleCmd(waiter, scheduleSql),
+                        new ScheduleCmd(waiter),
                         // Admin
                         new RoleCmd(),
                         new ChannelCmd(),

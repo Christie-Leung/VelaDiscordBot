@@ -7,7 +7,7 @@ public abstract class RandomStoofCmd extends Command {
 
     public RandomStoofCmd() {
         this.category = new Category("Random Stoof");
-        this.guildOnly = true;
+        this.guildOnly = false;
     }
 
     @Override

@@ -3,7 +3,6 @@ package Commands.Utilities;
 import Commands.ComparingDateTime.*;
 import Commands.UtilitiesCmd;
 import Sql.ScheduleSql;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -13,152 +12,260 @@ import java.awt.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static Commands.ComparingDateTime.CompareDates.*;
 
 public class ScheduleCmd extends UtilitiesCmd {
 
-    private final EventWaiter waiter;
-    private ScheduledEvent scheduledEvent;
+    public final EventWaiter waiter;
 
-    public ScheduleCmd(EventWaiter waiter, ScheduleSql sql) {
-        this.name = "schedule";
+    public ScheduleCmd(EventWaiter waiter) {
         this.waiter = waiter;
-        this.help = "schedules an event";
-        this.arguments = "add | get | getAll | delete> <yyyy> <mm> <dd> <HH> <MM> <ss";
+        this.name = "schedule";
+        this.help = "All things to do with schedules";
+        this.arguments = "add <name> | delete <name> | list | mine";
     }
 
     @Override
-    public void doCommand(CommandEvent event) {
-
-        CompareDates calendar = new CompareDates();
-
-        if(event.getArgs().isEmpty()) {
-            event.replyWarning("You didn't give me the correct format >:V! The command format is `!schedule {add|getAll|delete} yyyy mm dd HH MM ss`");
-        } else {
-            // split the choices on all whitespace
-            String[] items = event.getArgs().split("\\s+");
-            if(items.length == 1 && items[0].equalsIgnoreCase("getAll")) {
-
-                List<ScheduledEvent> se = ScheduleSql.scheduledEvent();
-                EmbedBuilder eb = new EmbedBuilder();
-
-                for (ScheduledEvent aSe : se) {
-
-                    long serverID = event.getGuild().getIdLong();
-                    if(aSe.getServerID() == serverID) {
-
-                        String description = aSe.getDescription();
-                        LocalDateTime scheduledTime = aSe.getTimestamp().toLocalDateTime();
-                        int day = Days.getDays(scheduledTime);
-                        Clock clock = Clock.getComparedTime(scheduledTime, day);
-                        int clockDay = clock.day;
-                        int hour = clock.hour;
-                        int minute = clock.min;
-                        int second = clock.sec;
-
-                        String formatting = String.format("%s are **%d** %s **%d** %s **%d** %s and **%d** %s %s!",
-                                getYouVsThere(LocalDateTime.now(), scheduledTime), clockDay, CompareDates.getDay(day), hour,
-                                getHour(hour), minute, getMinute(minute), second, getSecond(second),
-                                getLeftVsLate(LocalDateTime.now(), scheduledTime));
-
-                        eb.setTitle("All Schedules Events");
-                        eb.addField(description + " (" + aSe.getName() + ")", formatting, false);
-                        eb.setColor(Color.PINK);
-                    } else if(aSe.getServerID() < 0) {
-                        eb.setDescription("There are no scheduled events for this server!");
-                    }
-                    //   event.reply("<@!" + aSe.getName() + ">");
-                    //  event.reply(calendar.compareDates(description, time).build());
-                }
-                if(eb.isEmpty()) {
-                    event.replyWarning("There are no scheduled events!");
-                } else {
-                    event.reply(eb.build());
-                }
-            } else if(items.length == 2) {
-                switch (items[0]) {
-                    case "get":
-                        String eventName = ScheduleSql.get(items[1]).getDescription();
-                        LocalDateTime time = ScheduleSql.get(items[1]).getTimestamp().toLocalDateTime();
-                        event.reply(calendar.compareDates(eventName, time).build());
-                        break;
-                    case "delete":
-                        String description = ScheduleSql.get(items[1]).getDescription();
-                        ScheduleSql.delete(description);
-                        event.replySuccess("Successfully deleted " + description + "!");
-                        break;
-                    default:
-                        event.replyWarning("You stoopid, you messed up");
-                        break;
-                }
-            } else if(items.length == 7 && items[0].equalsIgnoreCase("add")) {
-
-                int year = Integer.parseInt(items[1]);
-                int month = Integer.parseInt(items[2]);
-                int day = Integer.parseInt(items[3]);
-                int hour = Integer.parseInt(items[4]);
-                int minute = Integer.parseInt(items[5]);
-                int second = Integer.parseInt(items[6]);
-
-                if(year < 1000) {
-                    event.replyWarning("You didn't give a proper year! smh my head");
-                }
-                if(month > 12 || month < 1) {
-                    event.replyWarning("So, do you think that a " + month + "th month exists? u boomer");
-                }
-                if(day > 31 || day < 1) {
-                    event.replyWarning("Day " + day + " :interrobang:");
-                }
-                if(hour > 24 || hour < 0) {
-                    event.replyWarning("Yes, " + hour + "th hour exists >:V");
-                }
-                if(minute > 60 || minute < 0) {
-                    event.replyWarning("Thanos is gonna come and snap his fingers, THERE ARE ONLY 60 MINUTES IN AN HOUR >:V");
-                }
-                if(second > 60 || second < 0) {
-                    event.replyWarning(second + " seconds" + " :interrobang:");
-                }
-
-
-                Timestamp scheduledTime = Timestamp.valueOf(LocalDateTime.of(year, month, day, hour, minute, second));
-                event.reply("What do you want the schedule name to be?");
-
+    public void doCommand(CommandEvent e) {
+        String[] items = e.getArgs().split("\\s+");
+        EmbedBuilder replyMsg;
+        switch (items[0]) {
+            case "add":
+                e.reply("When would you like me to remind you?");
+                EmbedBuilder parameters = new EmbedBuilder();
+                parameters.setTitle("Parameters")
+                        .appendDescription("You may choose any of the options")
+                        .addField("Optional Time", "--:--AM/PM (Ex. 9:00am)", true)
+                        .addField("Optional Day", "[month] [day] (Ex. Feb 17", true)
+                        .addField("Optional Year", "[yyyy] (Ex. 2020)", true)
+                        .addField("All Options", "ex. Feb 17 2020 9:00am", true);
+                parameters.setColor(new Color((int) Math.floor(Math.random() * 255), (int) Math.floor(Math.random() * 255), (int) Math.floor(Math.random() * 255)));
+                e.reply(parameters.build());
 
                 waiter.waitForEvent(MessageReceivedEvent.class,
-                        // make sure it's by the same user, and in the same channel, and for safety, a different message
-                        e -> e.getAuthor().equals(event.getAuthor())
-                                && e.getChannel().equals(event.getChannel())
-                                && !e.getMessage().equals(event.getMessage()),
-                        // respond, inserting the name they listed into the response
-                        e -> {
-                            event.reply(calendar.compareDates(e.getMessage().getContentRaw(), LocalDateTime.of(year, month, day, hour, minute, second)).build());
-                            scheduledEvent = new ScheduledEventImpl();
-                            scheduledEvent.setNameID(Long.parseLong(event.getAuthor().getId()));
-                            scheduledEvent.setName(event.getAuthor().getName());
-                            scheduledEvent.setDescription(e.getMessage().getContentRaw());
-                            scheduledEvent.setTimestamp(scheduledTime);
-                            scheduledEvent.setServerID(event.getGuild().getIdLong());
-                            if(scheduledEvent.getName() != null && scheduledEvent.getDescription() != null && scheduledEvent.getTimestamp().toString() != null) {
-                                ScheduleSql.add(scheduledEvent);
-                            } else {
-                                event.reply("Unsuccessful!" +
-                                        "\nUser: " + scheduledEvent.getName() +
-                                        "\nDescription: " + scheduledEvent.getDescription() +
-                                        "\nDate: " + scheduledEvent.getTimestamp());
-                            }
+                        event -> event.getChannel().equals(e.getChannel())
+                                && event.getAuthor().equals(e.getAuthor())
+                                && !event.getMessage().equals(e.getMessage()),
+                        event -> {
+                            String[] dateTime = event.getMessage().getContentRaw().split("\\s+");
+                            e.reply(addSchedule(Arrays.asList(dateTime), e).build());
                         },
                         // if the user takes more than a minute, time out
-                        1, TimeUnit.MINUTES, () -> event.reply("Sorry, you took too long."));
+                        1, TimeUnit.MINUTES, () -> e.reply("Sorry, you took too long."));
+                break;
+            case "delete":
+                deleteSchedule(e.getArgs().substring(7));
+                replyMsg = listSchedule(e.getGuild().getIdLong());
+                reply(replyMsg, e);
+                break;
+            case "list":
+                replyMsg = listSchedule(e.getGuild().getIdLong());
+                reply(replyMsg, e);
+                break;
+            case "mine":
+                replyMsg = userSchedule(e.getAuthor().getIdLong());
+                reply(replyMsg, e);
+                break;
 
-            } else {
-                event.replyWarning("You messed up real bad <:keylastupidface:630989473554890752>");
-            }
         }
     }
 
+    EmbedBuilder addSchedule(List<String> time, CommandEvent e) {
+        EmbedBuilder eb;
 
+        Clock scheduled = parseString(time);
+        LocalDateTime scheduledTime = LocalDateTime.of(
+                scheduled.year,
+                scheduled.month,
+                scheduled.day,
+                scheduled.hour,
+                scheduled.min
+        );
+
+        String description = e.getArgs().substring(4);
+
+        ScheduledEvent scheduledEvent = new ScheduledEventImpl();
+        scheduledEvent.setName(e.getAuthor().getName());
+        scheduledEvent.setDescription(description);
+        scheduledEvent.setNameID(e.getAuthor().getIdLong());
+        scheduledEvent.setServerID(e.getGuild().getIdLong());
+        scheduledEvent.setTimestamp(Timestamp.valueOf(scheduledTime));
+
+        if(!scheduledEvent.getName().isEmpty() && !scheduledEvent.getDescription().isEmpty() && !scheduledEvent.getTimestamp().toString().isEmpty()) {
+            ScheduleSql.add(scheduledEvent);
+        }
+
+        CompareDates calendar = new CompareDates();
+        eb = calendar.compareDates(description, scheduledTime);
+
+        return eb;
+    }
+
+    void deleteSchedule(String scheduleName) {
+        String description = ScheduleSql.get(scheduleName).getDescription();
+        ScheduleSql.delete(description);
+    }
+
+    EmbedBuilder listSchedule(long channelID) {
+        EmbedBuilder eb = new EmbedBuilder();
+        List<Schedules> schedulesList = parseThruSchedules(channelID);
+
+        for (Schedules s : schedulesList) {
+            String name = s.getUserName();
+            String description = s.getDescription();
+            String formatting = s.getTime();
+
+            eb.setTitle("All Schedules Events");
+            eb.addField(description + " (" + name + ")", formatting, false);
+            eb.setColor(Color.PINK);
+        }
+        if(eb.isEmpty()) {
+            eb.appendDescription("There are no scheduled events!");
+        }
+        return eb;
+    }
+
+    EmbedBuilder userSchedule(long userID) {
+        EmbedBuilder eb = new EmbedBuilder();
+        List<Schedules> schedulesList = parseThruSchedules(userID);
+
+        for (Schedules s : schedulesList) {
+            String name = s.getUserName();
+            String description = s.getDescription();
+            String formatting = s.getTime();
+
+            eb.setTitle("Your Scheduled Events");
+            eb.addField(description + " (" + name + ")", formatting, false);
+            eb.setColor(Color.PINK);
+        }
+
+        if(eb.isEmpty()) {
+            eb.appendDescription("You have no scheduled events!");
+        }
+
+        return eb;
+    }
+
+    Clock parseString(List<String> stringTime) {
+        int year = LocalDateTime.now().getYear();
+        int month = LocalDateTime.now().getMonthValue();
+        int day = LocalDateTime.now().getDayOfMonth();
+        int hour = LocalDateTime.now().getHour();
+        int min = LocalDateTime.now().getMinute();
+
+        Map<String, Integer> monthAbbreviations = new HashMap<>();
+        monthAbbreviations.put("jan", 1);
+        monthAbbreviations.put("feb", 2);
+        monthAbbreviations.put("mar", 3);
+        monthAbbreviations.put("apr", 4);
+        monthAbbreviations.put("may", 5);
+        monthAbbreviations.put("jun", 6);
+        monthAbbreviations.put("jul", 7);
+        monthAbbreviations.put("aug", 8);
+        monthAbbreviations.put("sep", 9);
+        monthAbbreviations.put("oct", 10);
+        monthAbbreviations.put("nov", 11);
+        monthAbbreviations.put("dec", 12);
+
+        for (String s : stringTime) {
+            if(s.length() == 4) {
+                year = Integer.parseInt(s);
+
+            } else if(s.toLowerCase().contains("am") || s.toLowerCase().contains("pm")) {
+                int index = 1;
+
+                for (Character c : s.toCharArray()) {
+                    if(c == ':') {
+                        index = s.indexOf(':');
+                    }
+                }
+
+                int i;
+                if(index == 1) {
+                    i = Integer.parseInt(String.valueOf(s.charAt(0)));
+                } else {
+                    i = Integer.parseInt(s.substring(0, index - 1));
+                }
+                if(s.toLowerCase().contains("am")) {
+                    hour = i;
+                } else {
+                    hour = i + 12;
+                }
+
+                min = Integer.parseInt(s.substring(index + 1, s.length() - 2));
+
+            } else if(Character.isLetter(s.toCharArray()[0])) {
+                for (String monthString : monthAbbreviations.keySet()) {
+                    if(s.toLowerCase().contains(monthString)) {
+                        month = monthAbbreviations.get(monthString);
+                    }
+                }
+            } else {
+                day = Integer.parseInt(s);
+            }
+        }
+        return new Clock(year, month, day, hour, min);
+    }
+
+    List<Schedules> parseThruSchedules(long ID) {
+        List<Schedules> schedulesList = new ArrayList<>();
+
+        List<ScheduledEvent> se = ScheduleSql.scheduledEvent();
+
+        for (ScheduledEvent aSe : se) {
+            if(aSe.getServerID() == ID || aSe.getNameID() == ID) {
+                String userName = aSe.getName();
+                String description = aSe.getDescription();
+                LocalDateTime scheduledTime = aSe.getTimestamp().toLocalDateTime();
+                int day = Days.getDays(scheduledTime);
+                Clock clock = Clock.getComparedTime(scheduledTime, day);
+                int clockDay = clock.day;
+                int hour = clock.hour;
+                int minute = clock.min;
+
+                String format = String.format("%s are **%d** %s, **%d** %s, and **%d** %s %s!",
+                        getYouVsThere(LocalDateTime.now(), scheduledTime), clockDay, getDay(day), hour,
+                        getHour(hour), minute, getMinute(minute),
+                        getLeftVsLate(LocalDateTime.now(), scheduledTime));
+                Schedules s = new Schedules(userName, description, format);
+                schedulesList.add(s);
+            }
+        }
+        return schedulesList;
+    }
+
+    void reply(EmbedBuilder embedBuilder, CommandEvent e) {
+        if(embedBuilder.isEmpty()) {
+            e.replyError("You messed up real bad <:keylastupidface:630989473554890752>");
+        } else {
+            e.reply(embedBuilder.build());
+        }
+    }
 }
 
+class Schedules {
+    String userName;
+    String description;
+    String time;
 
+    public Schedules(String userName, String description, String time) {
+        this.userName = userName;
+        this.description = description;
+        this.time = time;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getTime() {
+        return time;
+    }
+}

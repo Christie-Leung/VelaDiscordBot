@@ -60,7 +60,7 @@ public class CompareDates {
         return modifier;
     }
 
-    public static String getYouVsThere(LocalDateTime now, ChronoLocalDateTime scheduled) {
+    public static String getYouVsThere(LocalDateTime now, LocalDateTime scheduled) {
         String modifier2;
         if(now.isAfter(scheduled)) {
             modifier2 = "You";
@@ -78,11 +78,11 @@ public class CompareDates {
         int clockDay = clock.day;
         int hour = clock.hour;
         int minute = clock.min;
-        int second = clock.sec;
 
-        String description = String.format("%s are **%d** %s **%d** %s **%d** %s and **%d** %s %s!",
+
+        String description = String.format("%s are **%d** %s **%d** %s and **%d** %s %s!",
                 getYouVsThere(LocalDateTime.now(), eventDT), clockDay, getDay(day), hour,
-                getHour(hour), minute, getMinute(minute), second, getSecond(second),
+                getHour(hour), minute, getMinute(minute),
                 getLeftVsLate(LocalDateTime.now(), eventDT));
 
 
