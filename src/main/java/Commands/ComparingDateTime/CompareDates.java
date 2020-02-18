@@ -39,17 +39,8 @@ public class CompareDates {
         return m;
     }
 
-    public static String getSecond(int second) {
-        String s;
-        if(second == 1 || second == -1) {
-            s = "second";
-        } else {
-            s = "seconds";
-        }
-        return s;
-    }
 
-    public static String getLeftVsLate(LocalDateTime now, ChronoLocalDateTime scheduled) {
+    public static String getLeftVsLate(LocalDateTime now, LocalDateTime scheduled) {
         String modifier;
         if(now.isAfter(scheduled)) {
             modifier = "late";
@@ -70,22 +61,23 @@ public class CompareDates {
         return modifier2;
     }
 
-    public EmbedBuilder compareDates(String eventName, LocalDateTime eventDT) {
+    public String compareDates(LocalDateTime eventDT) {
 
-        int day = Days.getDays(eventDT);
+        Days days = new Days();
+        int day = days.getTotalDays(eventDT);
 
         Clock clock = Clock.getComparedTime(eventDT, day);
         int clockDay = clock.day;
         int hour = clock.hour;
         int minute = clock.min;
 
-
-        String description = String.format("%s are **%d** %s **%d** %s and **%d** %s %s!",
+        return String.format("%s are **%d** %s **%d** %s and **%d** %s %s!",
                 getYouVsThere(LocalDateTime.now(), eventDT), clockDay, getDay(day), hour,
                 getHour(hour), minute, getMinute(minute),
                 getLeftVsLate(LocalDateTime.now(), eventDT));
+    }
 
-
+    public EmbedBuilder buildEmbedMessage(String eventName, String description) {
         EmbedBuilder eb = new EmbedBuilder();
 
         eb.setColor(Color.PINK);
@@ -103,9 +95,6 @@ public class CompareDates {
                 eb.setColor(Color.orange);
                 break;
         }
-
         return eb;
     }
-
-
 }

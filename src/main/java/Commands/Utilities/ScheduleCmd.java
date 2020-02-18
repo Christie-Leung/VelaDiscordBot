@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static Commands.ComparingDateTime.CompareDates.*;
-
 public class ScheduleCmd extends UtilitiesCmd {
 
     public final EventWaiter waiter;
@@ -69,7 +67,6 @@ public class ScheduleCmd extends UtilitiesCmd {
                 replyMsg = userSchedule(e.getAuthor().getIdLong());
                 reply(replyMsg, e);
                 break;
-
         }
     }
 
@@ -99,8 +96,7 @@ public class ScheduleCmd extends UtilitiesCmd {
         }
 
         CompareDates calendar = new CompareDates();
-        eb = calendar.compareDates(description, scheduledTime);
-
+        eb = calendar.buildEmbedMessage(description, calendar.compareDates(scheduledTime));
         return eb;
     }
 
@@ -145,7 +141,6 @@ public class ScheduleCmd extends UtilitiesCmd {
         if(eb.isEmpty()) {
             eb.appendDescription("You have no scheduled events!");
         }
-
         return eb;
     }
 
@@ -187,9 +182,9 @@ public class ScheduleCmd extends UtilitiesCmd {
                 if(index == 1) {
                     i = Integer.parseInt(String.valueOf(s.charAt(0)));
                 } else {
-                    i = Integer.parseInt(s.substring(0, index - 1));
+                    i = Integer.parseInt(s.substring(0, index));
                 }
-                if(s.toLowerCase().contains("am")) {
+                if(s.toLowerCase().contains("am") || s.contains("12")) {
                     hour = i;
                 } else {
                     hour = i + 12;
@@ -220,16 +215,9 @@ public class ScheduleCmd extends UtilitiesCmd {
                 String userName = aSe.getName();
                 String description = aSe.getDescription();
                 LocalDateTime scheduledTime = aSe.getTimestamp().toLocalDateTime();
-                int day = Days.getDays(scheduledTime);
-                Clock clock = Clock.getComparedTime(scheduledTime, day);
-                int clockDay = clock.day;
-                int hour = clock.hour;
-                int minute = clock.min;
+                CompareDates compareDates = new CompareDates();
+                String format = compareDates.compareDates(scheduledTime);
 
-                String format = String.format("%s are **%d** %s, **%d** %s, and **%d** %s %s!",
-                        getYouVsThere(LocalDateTime.now(), scheduledTime), clockDay, getDay(day), hour,
-                        getHour(hour), minute, getMinute(minute),
-                        getLeftVsLate(LocalDateTime.now(), scheduledTime));
                 Schedules s = new Schedules(userName, description, format);
                 schedulesList.add(s);
             }

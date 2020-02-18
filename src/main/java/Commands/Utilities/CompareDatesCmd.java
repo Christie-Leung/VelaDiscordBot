@@ -49,7 +49,8 @@ public class CompareDatesCmd extends UtilitiesCmd {
             if(second > 60 || second < 0) {
                 event.replyWarning(second + " seconds" + " :interrobang:");
             }
-            event.reply(calendar.compareDates("Comparing ...", LocalDateTime.of(year, month, day, hour, minute, second)).build());
+            String description = calendar.compareDates(LocalDateTime.of(year, month, day, hour, minute, second));
+            event.reply(calendar.buildEmbedMessage("Comparing...", description).build());
         }
     }
 }
