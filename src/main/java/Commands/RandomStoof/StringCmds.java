@@ -23,7 +23,7 @@ public class StringCmds {
         listOfStrings.add(new StringCmds("keith", "Yesssss Kee e e ee e e ei ei ei ei ei ei ei ei ei ei ei ei ei ei ei ei ei ei ei ei ei ei ei ei eith"));
         listOfStrings.add(new StringCmds("christie", "Yesssssssssssssssssssssssss Christieeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"));
         listOfStrings.add(new StringCmds("ree", "Ree e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e e ee e e e e e e e ee e e e e e"));
-        listOfStrings.add(new StringCmds("carter", "__***THE WRATH OF CARTER BAGUETTE***__\n" +
+        listOfStrings.add(new StringCmds("wrathcarter", "__***THE WRATH OF CARTER BAGUETTE***__\n" +
                 ":cloud_lightning: :fire: :oncoming_police_car: :police_car: :oncoming_police_car: :regional_indicator_c: :regional_indicator_a: :regional_indicator_r: :regional_indicator_t: :regional_indicator_e: :regional_indicator_r: :oncoming_police_car: :police_car: :oncoming_police_car: :fire: :cloud_lightning:"));
         listOfStrings.add(new StringCmds("josh", "Yesssssssssssssssssssssssssss Jooooooooooooooooooooooooooooooooooooooooooooooooosh"));
         listOfStrings.add(new StringCmds("racuwu", "Yesssssssssssssssssssssss Racuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwuwul"));

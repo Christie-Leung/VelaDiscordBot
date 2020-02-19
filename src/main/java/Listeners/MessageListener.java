@@ -6,10 +6,12 @@ import Sql.ScheduleSql;
 import Commands.RandomStoof.SpamCmd;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.RestAction;
 
 import java.awt.*;
 import java.sql.Timestamp;
@@ -58,6 +60,21 @@ public class MessageListener extends ListenerAdapter {
         };
         timer.scheduleAtFixedRate(repeatedTask, 0, 6000);
 
+
+        if(!event.getAuthor().isBot() &&
+                event.isFromGuild()) {
+            User keyla = jda.getUserById("301028982684516352");
+            String msg;
+            if(keyla != null) {
+                if(event.getMessage().getContentRaw().contains("@!301028982684516352")) {
+                    msg = event.getMessage().getContentRaw().replace("@!301028982684516352", "me ping");
+                } else {
+                    msg = event.getMessage().getContentRaw();
+                }
+                System.out.println("[" + event.getGuild().getName() + ": " + event.getChannel().getName() + "] (" + event.getAuthor().getName() + ") - " + msg);
+            }
+        }
+
         StringBuilder stringBuilder = new StringBuilder();
         MessageChannel channel = event.getChannel();
         int year = LocalDateTime.now().getYear();
@@ -74,17 +91,23 @@ public class MessageListener extends ListenerAdapter {
                 } else {
                     for (StringCmds s : StringCmds.listOfStrings) {
                         if(msg.toLowerCase().startsWith(s.cmd)) {
-                            event.getChannel().sendMessage(s.output).tts(true).queue();
+                            String author = event.getAuthor().getName();
+                            RestAction<Message> appendingMsg = event.getChannel().sendMessage(author + " said " + s.output).tts(true);
+                            long msgid = appendingMsg.complete().getIdLong();
+                            event.getChannel().deleteMessageById(msgid).queue();
+                            event.getChannel().sendMessage(s.output).tts(false).queue();
                             event.getMessage().delete().queue();
                         }
                     }
                     switch (stringBuilder.toString()) {
                         //random
                         case "christmas":
-                            channel.sendMessage(calendar.compareDates("Christmas Countdown", LocalDateTime.of(year, 12, 25, 0, 0, 0)).build()).queue();
+                            String description = calendar.compareDates(LocalDateTime.of(year, 12, 25, 0, 0, 0));
+                            channel.sendMessage(calendar.buildEmbedMessage("Christmas Countdown", description).build()).queue();
                             break;
                         case "halloween":
-                            channel.sendMessage(calendar.compareDates("Halloween Countdown", LocalDateTime.of(year, 10, 31, 0, 0, 0)).build()).queue();
+                            description = calendar.compareDates(LocalDateTime.of(year, 10, 31, 0, 0, 0));
+                            channel.sendMessage(calendar.buildEmbedMessage("Halloween Countdown", description).build()).queue();
                             break;
                     }
                 }
