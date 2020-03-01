@@ -28,21 +28,24 @@ public class RoleCmd extends AdminCmd {
 
         if(items.length > 0) {
             if(items[0].contains("create")) {
-                guild.createRole().setName(items[1]).queue();
-                event.getChannel().sendMessage("Successfully created " + items[1] + " role!").queue();
+                String roleName = event.getArgs().substring(7);
+                guild.createRole().setName(roleName).queue();
+                event.getChannel().sendMessage("Successfully created " + roleName + " role!").queue();
             } else if(items[0].contains("delete")) {
+                String roleName = event.getArgs().substring(6);
                 for (Role role : guild.getRoles()) {
-                    if(role.getName().equalsIgnoreCase(items[1]) || role.getName().contains(items[1])) {
+                    if(role.getName().equalsIgnoreCase(roleName) || role.getName().contains(roleName)) {
                         role.delete().queue();
                         event.getChannel().sendMessage("Successfully deleted " + role.getName() + "!").queue();
                         break;
                     }
                 }
             } else if(items[0].contains("perm")) {
+                String roleName = event.getArgs().substring(4);
                 EmbedBuilder eb = new EmbedBuilder();
                 eb.setTitle("Role Perms: ").setColor(Color.green);
                 for (Role r : guild.getRoles()) {
-                    if(r.getName().equalsIgnoreCase(items[1]) || r.getName().contains(items[1])) {
+                    if(r.getName().equalsIgnoreCase(roleName) || r.getName().contains(roleName)) {
                         for (Permission perm : Permission.values()) {
                             if(r.hasPermission(perm)) {
                                 eb.appendDescription("**" + perm.getName() + ": true**\n");
@@ -54,9 +57,10 @@ public class RoleCmd extends AdminCmd {
                 }
                 event.getChannel().sendMessage(eb.build()).queue();
             } else if(items[0].contains("add")) {
+                String roleName = event.getArgs().substring(3);
                 if(items.length >= 3) {
                     for (Role r : guild.getRoles()) {
-                        if(r.getName().equalsIgnoreCase(items[1]) || r.getName().contains(items[1])) {
+                        if(r.getName().equalsIgnoreCase(roleName) || r.getName().contains(roleName)) {
                             List<Member> memberList = event.getMessage().getMentionedMembers();
                             for (Member member : memberList) {
                                 boolean check = checkPlayersRole(member, r.getName());
@@ -75,9 +79,10 @@ public class RoleCmd extends AdminCmd {
                     event.getChannel().sendMessage("Do !role add [roleName] [user]").queue();
                 }
             } else if(items[0].contains("remove")) {
+                String roleName = event.getArgs().substring(6);
                 if(items.length >= 3) {
                     for (Role r : guild.getRoles()) {
-                        if(r.getName().equalsIgnoreCase(items[1]) || r.getName().contains(items[1])) {
+                        if(r.getName().equalsIgnoreCase(roleName) || r.getName().contains(roleName)) {
                             List<Member> memberList = event.getMessage().getMentionedMembers();
                             for (Member member : memberList) {
                                 boolean check = checkPlayersRole(member, r.getName());
