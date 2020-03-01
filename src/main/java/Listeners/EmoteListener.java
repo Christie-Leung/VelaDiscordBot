@@ -1,6 +1,5 @@
 package Listeners;
 
-import net.dv8tion.jda.api.events.emote.EmoteAddedEvent;
 import net.dv8tion.jda.api.events.emote.GenericEmoteEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 

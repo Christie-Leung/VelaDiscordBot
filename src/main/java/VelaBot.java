@@ -7,10 +7,7 @@ import Commands.School.Chem;
 import Commands.Utilities.CompareDatesCmd;
 import Commands.Utilities.MovieList.MovieListCmd;
 import Commands.Utilities.ScheduleCmd;
-import Listeners.GameListener;
-import Listeners.JoinGuildListener;
-import Listeners.MessageListener;
-import Listeners.PlayerJoinListener;
+import Listeners.*;
 import Sql.MovieListSql;
 import Sql.ScheduleSql;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
@@ -28,7 +25,10 @@ public class VelaBot extends ListenerAdapter {
         ScheduleSql.getConn();
         MovieListSql.getConn();
 
-        MessageListener msgListener = new MessageListener();
+        ScheduleReminder scheduleReminder = new ScheduleReminder();
+        LogChat logChat = new LogChat();
+        RegularResponses regularResponses = new RegularResponses();
+        IrregularResponses irregularResponses = new IrregularResponses();
         PlayerJoinListener playerJoinListener = new PlayerJoinListener();
         JoinGuildListener joinGuildListener = new JoinGuildListener();
         GameListener gameListener = new GameListener();
@@ -69,7 +69,10 @@ public class VelaBot extends ListenerAdapter {
                 );
 
         new JDABuilder(Private.botToken)
-                .addEventListeners(msgListener,
+                .addEventListeners(logChat,
+                        scheduleReminder,
+                        regularResponses,
+                        irregularResponses,
                         playerJoinListener,
                         joinGuildListener,
                         gameListener,
