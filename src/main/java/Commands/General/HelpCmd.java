@@ -1,6 +1,8 @@
 package Commands.General;
 
 import com.jagrosh.jdautilities.command.*;
+import com.vdurmont.emoji.Emoji;
+import com.vdurmont.emoji.EmojiManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.awt.*;
@@ -23,10 +25,12 @@ public class HelpCmd extends Command {
         ArrayList<String> categories = new ArrayList<>();
         ArrayList<Command> tempCmds = new ArrayList<>();
         for (Command c : e.getClient().getCommands()) {
-            if(c.getCategory() == null) {
-                categories.add("No Category");
-            } else if(!categories.contains(c.getCategory().getName())) {
-                categories.add(c.getCategory().getName());
+            if(!c.isHidden()) {
+                if(c.getCategory() == null) {
+                    categories.add("No Category");
+                } else if(!categories.contains(c.getCategory().getName())) {
+                    categories.add(c.getCategory().getName());
+                }
             }
         }
 
@@ -43,7 +47,9 @@ public class HelpCmd extends Command {
             eb.addField(s, buildCommandString(tempCmds).toString(), false);
             tempCmds.clear();
         }
+        Emoji checkMark = EmojiManager.getForAlias("white_check_mark");
 
+        e.replySuccess("Sent list to your DMs " + checkMark.getUnicode());
         e.replyInDm(eb.build());
     }
 
