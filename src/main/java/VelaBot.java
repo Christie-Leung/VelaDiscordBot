@@ -54,6 +54,7 @@ public class VelaBot extends ListenerAdapter {
                         new SpamCmd(waiter),
                         new YellCmd(waiter),
                         new LetterCmd(waiter),
+                        new PickCmd(),
                         // School
                         new Chem(),
                         // Utilities
@@ -65,7 +66,6 @@ public class VelaBot extends ListenerAdapter {
                         new ChannelCmd(),
                         // Owner
                         new Testing(waiter)
-
                 );
 
         new JDABuilder(Private.botToken)
