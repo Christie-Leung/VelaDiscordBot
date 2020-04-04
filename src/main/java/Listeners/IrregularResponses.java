@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import java.time.LocalTime;
+
 public class IrregularResponses extends ListenerAdapter {
 
     int mood = 0;
@@ -18,28 +20,35 @@ public class IrregularResponses extends ListenerAdapter {
         String msg = event.getMessage().getContentRaw();
         MessageChannel channel = event.getChannel();
 
-        for (Member m : event.getMessage().getMentionedMembers()) {
-            if(m.getUser().getName().contains("Vela")) {
-                if(activationNum % 2 == 0) {
-                    if(randomNum % 10 == 0) {
-                        channel.sendMessage("BRUH WHY YOU PINGING ME").queue();
-                    } else if(randomNum % 3 == 0) {
-                        channel.sendMessage(event.getAuthor().getAsMention() + " no").queue();
+        if(LocalTime.now().getHour() == 16 && LocalTime.now().getMinute() == 20) {
+            event.getChannel().sendMessage("@everyone u asked for it").queue();
+        }
+        if(event.getMessage().isFromGuild() && !event.getMessage().getMentionedMembers().isEmpty()) {
+            for (Member m : event.getMessage().getMentionedMembers()) {
+                if(m.getUser().getName().contains("Vela") && !event.getAuthor().isBot()) {
+                    if(activationNum % 2 == 0) {
+                        if(randomNum % 10 == 0) {
+                            channel.sendMessage("BRUH WHY YOU PINGING ME").queue();
+                        } else if(randomNum % 3 == 0) {
+                            channel.sendMessage(event.getAuthor().getAsMention() + " no").queue();
+                        }
                     }
+                } else if(m.getUser().getName().contains("Keyla") && !event.getAuthor().getName().contains("Vela")) {
+                    channel.sendMessage(event.getAuthor().getAsMention() + " hey! bad").queue();
                 }
             }
-        }
 
-        if(event.getMessage().mentionsEveryone()) {
-            if(activationNum % 3 == 0) {
-                channel.sendMessage("YOU ARE ANNOYING!").queue();
+            if(event.getMessage().mentionsEveryone()) {
+                if(activationNum % 3 == 0) {
+                    channel.sendMessage("YOU ARE ANNOYING!").queue();
+                }
             }
-        }
 
-        if(event.getMessage().getMentionedMembers().size() > 2) {
-            if(activationNum % 4 == 0) {
-                channel.sendMessage("Why u pinging so many people >:V").queue();
-                channel.sendMessage("Guess I'll ping you too " + event.getAuthor().getAsMention()).queue();
+            if(event.getMessage().getMentionedMembers().size() >= 2) {
+                if(activationNum % 4 == 0) {
+                    channel.sendMessage("Why u pinging so many people >:V").queue();
+                    channel.sendMessage("Guess I'll ping you too " + event.getAuthor().getAsMention()).queue();
+                }
             }
         }
 
