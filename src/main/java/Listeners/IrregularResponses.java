@@ -1,5 +1,6 @@
 package Listeners;
 
+import Commands.RandomStoof.SpamCmd;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -20,20 +21,46 @@ public class IrregularResponses extends ListenerAdapter {
         String msg = event.getMessage().getContentRaw();
         MessageChannel channel = event.getChannel();
 
-        if(LocalTime.now().getHour() == 16 && LocalTime.now().getMinute() == 20) {
+        if(LocalTime.now().getHour() == 16 && LocalTime.now().getMinute() == 20 && LocalTime.now().getSecond() == 0) {
             event.getChannel().sendMessage("@everyone u asked for it").queue();
+        }
+        if(event.getMessage().getContentRaw().toCharArray()[event.getMessage().getContentRaw().length() - 1] == '.' && !event.getAuthor().isBot()) {
+            channel.sendMessage(event.getAuthor().getAsMention() + " hey! bad").queue();
+        }
+        int wordCount = 0;
+        for (String word : event.getMessage().getContentRaw().split("\\s+")) {
+            if(word.toCharArray().length >= 8) {
+                wordCount += 1;
+                if(wordCount > 4) {
+                    channel.sendMessage(event.getAuthor().getAsMention() + " hey! bad").queue();
+                    break;
+                }
+            }
+        }
+        int commaCount = 0;
+        for (Character c : event.getMessage().getContentRaw().toCharArray()) {
+            if(c == ',') {
+                commaCount += 1;
+                if(commaCount >= 3) {
+                    channel.sendMessage(event.getAuthor().getAsMention() + " hey! bad").queue();
+                    break;
+                }
+            }
         }
         if(event.getMessage().isFromGuild() && !event.getMessage().getMentionedMembers().isEmpty()) {
             for (Member m : event.getMessage().getMentionedMembers()) {
                 if(m.getUser().getName().contains("Vela") && !event.getAuthor().isBot()) {
+                    if(event.getAuthor().getName().contains("Kangaroo")) {
+                        SpamCmd.sendPrivateMessage(event.getAuthor(), "HEY YOU STOP PINGING ME!");
+                    }
                     if(activationNum % 2 == 0) {
-                        if(randomNum % 10 == 0) {
+                        if(randomNum % 5 == 0) {
                             channel.sendMessage("BRUH WHY YOU PINGING ME").queue();
                         } else if(randomNum % 3 == 0) {
                             channel.sendMessage(event.getAuthor().getAsMention() + " no").queue();
                         }
                     }
-                } else if(m.getUser().getName().contains("Keyla") && !event.getAuthor().getName().contains("Vela")) {
+                } else if(m.getUser().getName().contains("Keyla") && !event.getAuthor().isBot()) {
                     channel.sendMessage(event.getAuthor().getAsMention() + " hey! bad").queue();
                 }
             }
