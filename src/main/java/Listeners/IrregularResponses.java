@@ -24,8 +24,12 @@ public class IrregularResponses extends ListenerAdapter {
         if(LocalTime.now().getHour() == 16 && LocalTime.now().getMinute() == 20 && LocalTime.now().getSecond() == 0) {
             event.getChannel().sendMessage("@everyone u asked for it").queue();
         }
-        if(event.getMessage().getContentRaw().toCharArray()[event.getMessage().getContentRaw().length() - 1] == '.' && !event.getAuthor().isBot()) {
-            channel.sendMessage(event.getAuthor().getAsMention() + " hey! bad").queue();
+        if(!event.getAuthor().isBot()) {
+            if(randomNum % 9 == 0) {
+                if(event.getMessage().getContentRaw().toCharArray()[event.getMessage().getContentRaw().length() - 1] == '.' && event.getMessage().getContentRaw().split("\\s+").length >= 3) {
+                    channel.sendMessage(event.getAuthor().getAsMention() + " hey! bad").queue();
+                }
+            }
         }
         int wordCount = 0;
         for (String word : event.getMessage().getContentRaw().split("\\s+")) {
