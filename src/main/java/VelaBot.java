@@ -1,8 +1,10 @@
 import Commands.Admin.ChannelCmd;
-import Commands.Admin.RoleCmd;
 import Commands.General.*;
+import Commands.Owner.ReactionListener;
+import Commands.Owner.ReactionRolesSql;
 import Commands.Owner.Testing;
 import Commands.RandomStoof.*;
+import Commands.Admin.RoleCmd;
 import Commands.School.Chem;
 import Commands.Utilities.CompareDatesCmd;
 import Commands.Utilities.MovieList.MovieListCmd;
@@ -24,6 +26,7 @@ public class VelaBot extends ListenerAdapter {
 
         ScheduleSql.getConn();
         MovieListSql.getConn();
+        ReactionRolesSql.getConn();
 
         ScheduleReminder scheduleReminder = new ScheduleReminder();
         LogChat logChat = new LogChat();
@@ -32,6 +35,8 @@ public class VelaBot extends ListenerAdapter {
         PlayerJoinListener playerJoinListener = new PlayerJoinListener();
         JoinGuildListener joinGuildListener = new JoinGuildListener();
         GameListener gameListener = new GameListener();
+        ReactionListener reactionListener = new ReactionListener();
+
 
         StringCmds.setListOfStrings();
 
@@ -62,7 +67,7 @@ public class VelaBot extends ListenerAdapter {
                         new CompareDatesCmd(),
                         new ScheduleCmd(waiter),
                         // Admin
-                        new RoleCmd(),
+                        new RoleCmd(waiter),
                         new ChannelCmd(),
                         // Owner
                         new Testing(waiter)
@@ -76,6 +81,7 @@ public class VelaBot extends ListenerAdapter {
                         playerJoinListener,
                         joinGuildListener,
                         gameListener,
+                        reactionListener,
                         client.build(),
                         waiter)
                 .build();
