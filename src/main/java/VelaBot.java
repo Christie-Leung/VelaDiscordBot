@@ -1,7 +1,9 @@
 import Commands.Admin.ChannelCmd;
 import Commands.General.*;
-import Commands.Owner.ReactionListener;
-import Commands.Owner.ReactionRolesSql;
+import Commands.Owner.ReactionRoles.AddReactionRoles;
+import Commands.Owner.ReactionRoles.ReactionListener;
+import Commands.Utilities.ListCmd;
+import Sql.ReactionRolesSql;
 import Commands.Owner.Testing;
 import Commands.RandomStoof.*;
 import Commands.Admin.RoleCmd;
@@ -12,8 +14,14 @@ import Commands.Utilities.ScheduleCmd;
 import Listeners.*;
 import Sql.MovieListSql;
 import Sql.ScheduleSql;
+import Sql.UserSql;
+import com.github.ygimenez.exception.InvalidHandlerException;
+import com.github.ygimenez.method.Pages;
+import com.github.ygimenez.model.Paginator;
+import com.github.ygimenez.model.PaginatorBuilder;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -21,22 +29,22 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import javax.security.auth.login.LoginException;
 
 public class VelaBot extends ListenerAdapter {
-    public static void main(String[] args) throws LoginException {
+    public static void main(String[] args) throws LoginException, InvalidHandlerException {
+        JDABuilder builder = JDABuilder.createDefault(Private.botToken);
         EventWaiter waiter = new EventWaiter();
 
         ScheduleSql.getConn();
         MovieListSql.getConn();
         ReactionRolesSql.getConn();
+        UserSql.getConn();
 
         ScheduleReminder scheduleReminder = new ScheduleReminder();
-        LogChat logChat = new LogChat();
         RegularResponses regularResponses = new RegularResponses();
         IrregularResponses irregularResponses = new IrregularResponses();
         PlayerJoinListener playerJoinListener = new PlayerJoinListener();
         JoinGuildListener joinGuildListener = new JoinGuildListener();
         GameListener gameListener = new GameListener();
         ReactionListener reactionListener = new ReactionListener();
-
 
         StringCmds.setListOfStrings();
 
@@ -46,7 +54,7 @@ public class VelaBot extends ListenerAdapter {
                 .setActivity(Activity.playing("you"))
                 .useHelpBuilder(false)
                 .addCommands(
-                        new HelpCmd(),
+                        new HelpCmd(waiter),
                         // General
                         new UserCmd(),
                         new InfoCmd(),
@@ -66,24 +74,32 @@ public class VelaBot extends ListenerAdapter {
                         new MovieListCmd(waiter),
                         new CompareDatesCmd(),
                         new ScheduleCmd(waiter),
+                        new ListCmd(waiter),
                         // Admin
                         new RoleCmd(waiter),
-                        new ChannelCmd(),
+                        new ChannelCmd(waiter),
                         // Owner
+                        new AddReactionRoles(waiter),
                         new Testing(waiter)
                 );
 
-        new JDABuilder(Private.botToken)
-                .addEventListeners(logChat,
-                        scheduleReminder,
-                        regularResponses,
-                        irregularResponses,
-                        playerJoinListener,
-                        joinGuildListener,
-                        gameListener,
-                        reactionListener,
-                        client.build(),
-                        waiter)
+        builder.addEventListeners(
+                scheduleReminder,
+                regularResponses,
+                irregularResponses,
+                playerJoinListener,
+                joinGuildListener,
+                gameListener,
+                reactionListener,
+                client.build(),
+                waiter);
+
+        JDA bot = builder.build();
+
+        Paginator paginator = PaginatorBuilder.createPaginator()
+                .setHandler(bot)
+                .shouldRemoveOnReact(true)
                 .build();
+        Pages.activate(paginator);
     }
 }

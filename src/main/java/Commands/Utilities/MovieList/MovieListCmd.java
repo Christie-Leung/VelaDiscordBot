@@ -16,7 +16,7 @@ public class MovieListCmd extends UtilitiesCmd {
 
     private final EventWaiter waiter;
 
-    public MovieListCmd(EventWaiter waiter, MovieListSql sql) {
+    public MovieListCmd(EventWaiter waiter) {
         this.name = "movielist";
         this.help = "does smth with movie lists <:keylastupidface:630989473554890752>";
         this.waiter = waiter;
@@ -47,11 +47,10 @@ public class MovieListCmd extends UtilitiesCmd {
                     event.replyWarning("There are no movies stoopid. Go add some <:latino:631336237197688833>");
                 }
 
-            } else if(items.length == 2 && items[0].equalsIgnoreCase("delete")) {
-                MovieListSql.delete(items[1]);
-                event.replySuccess("Successfully deleted " + items[1] + " from the list!");
-            } else if(items[0].equalsIgnoreCase("add")) {
-
+            } else if (items.length >= 2 && items[0].equalsIgnoreCase("delete")) {
+                MovieListSql.delete(event.getMessage().getContentRaw().substring(18));
+                event.replySuccess("Successfully deleted " + event.getMessage().getContentRaw().substring(18) + " from the list!");
+            } else if (items[0].equalsIgnoreCase("add")) {
                 event.reply("Which movie would you like to add?");
                 waiter.waitForEvent(MessageReceivedEvent.class,
                         // make sure it's by the same user, and in the same channel, and for safety, a different message

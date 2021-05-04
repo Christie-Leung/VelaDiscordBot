@@ -9,7 +9,6 @@ import java.util.List;
 
 public class MovieListSql {
 
-
     private static Connection connection;
 
     public MovieListSql() {
