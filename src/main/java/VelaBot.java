@@ -2,12 +2,13 @@ import Commands.Admin.ChannelCmd;
 import Commands.General.*;
 import Commands.Owner.ReactionRoles.AddReactionRoles;
 import Commands.Owner.ReactionRoles.ReactionListener;
+import Commands.Utilities.Flashcards.FlashcardCmd;
 import Commands.Utilities.ListCmd;
 import Sql.ReactionRolesSql;
 import Commands.Owner.Testing;
 import Commands.RandomStoof.*;
 import Commands.Admin.RoleCmd;
-import Commands.School.Chem;
+import Commands.Utilities.Chem;
 import Commands.Utilities.CompareDatesCmd;
 import Commands.Utilities.MovieList.MovieListCmd;
 import Commands.Utilities.ScheduleCmd;
@@ -25,12 +26,25 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 import javax.security.auth.login.LoginException;
 
 public class VelaBot extends ListenerAdapter {
     public static void main(String[] args) throws LoginException, InvalidHandlerException {
-        JDABuilder builder = JDABuilder.createDefault(Private.botToken);
+        JDABuilder builder = JDABuilder.createDefault(Private.botToken,
+                GatewayIntent.GUILD_MEMBERS,
+                GatewayIntent.GUILD_PRESENCES,
+                GatewayIntent.GUILD_MESSAGES,
+                GatewayIntent.DIRECT_MESSAGES,
+                GatewayIntent.GUILD_MESSAGE_REACTIONS,
+                GatewayIntent.GUILD_MESSAGE_TYPING,
+                GatewayIntent.GUILD_EMOJIS,
+                GatewayIntent.DIRECT_MESSAGE_REACTIONS
+        )
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
+                .setLargeThreshold(50);
         EventWaiter waiter = new EventWaiter();
 
         ScheduleSql.getConn();
@@ -68,13 +82,12 @@ public class VelaBot extends ListenerAdapter {
                         new YellCmd(waiter),
                         new LetterCmd(waiter),
                         new PickCmd(),
-                        // School
-                        new Chem(),
                         // Utilities
                         new MovieListCmd(waiter),
                         new CompareDatesCmd(),
                         new ScheduleCmd(waiter),
                         new ListCmd(waiter),
+                        new Chem(),
                         // Admin
                         new RoleCmd(waiter),
                         new ChannelCmd(waiter),
